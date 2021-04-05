@@ -1,0 +1,29 @@
+name: gnat-service/simple-cicd
+author: leaf4monkey
+description: A simplified CI pipeline tool
+inputs:
+  numOctocats:
+    description: 'Number of Octocats'
+    required: false
+    default: '1'
+  octocatEyeColor:
+    description: 'Eye color of the Octocats'
+    required: true
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - id: random-number-generator
+      run: echo "::set-output name=random-id::$(echo $RANDOM)"
+      shell: bash
+# runs:
+#   using: 'node12'
+#   pre: 'setup.js'
+#   main: 'dist/index.js'
+#   post: 'cleanup.js'
+branding:
+  icon: 'award'
+  color: 'green'
