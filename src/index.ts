@@ -1,4 +1,7 @@
 import * as core from '@actions/core';
+import { context, getOctokit } from '@actions/github';
+import { FileChangingCollector } from './file-changing-collector';
+import { OctokitClient } from './octokit';
 
 async function run(): Promise<void> {
   // Languages:
@@ -22,4 +25,14 @@ async function run(): Promise<void> {
   //       4.1.1 Command lines
   //       4.1.2 ArgoCD
   //       4.1.3 Helm
-}
+
+  const token = core.getInput('token');
+
+  const octokit = OctokitClient.getInstance(token);
+  const fileChangingCollector = new FileChangingCollector(octokit);
+
+  const comparision = await fileChangingCollector.getComparision();
+
+};
+
+run();
