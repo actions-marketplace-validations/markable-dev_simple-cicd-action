@@ -15,15 +15,17 @@
   "dependencies": {
     "@actions/cache": "^1.0.6",
     "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^4.0.0",
     "@actions/glob": "^0.1.1",
     "@actions/io": "^1.1.0",
     "@actions/tool-cache": "^1.6.1",
-    "@actions/exec": "^1.0.4",
-    "@actions/github": "^4.0.0",
-    "get-changed-files": "git+https://github.com/jitterbit/get-changed-files#v1",
     "csv-parse": "^4.15.3",
+    "get-changed-files": "git+https://github.com/jitterbit/get-changed-files#v1",
+    "minimatch": "^3.0.4",
     "semver": "^7.3.5",
-    "tmp": "^0.2.1"
+    "tmp": "^0.2.1",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@types/csv-parse": "^1.2.2",

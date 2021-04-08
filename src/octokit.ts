@@ -53,10 +53,10 @@ export class OctokitClient {
     }
   }
 
-  async compareBaseAndHead () {
+  async compareCommits (base = this.base, head = this.head, shouldAhead = true) {
     const response = await this.client.repos.compareCommits({
-      base: this.base,
-      head: this.head,
+      base,
+      head,
       owner: this.context.repo.owner,
       repo: context.repo.repo,
     });
@@ -70,7 +70,7 @@ export class OctokitClient {
     }
 
     // Ensure that the head commit is ahead of the base commit.
-    if (response.data.status !== 'ahead') {
+    if (shouldAhead && response.data.status !== 'ahead') {
       core.setFailed(
         `The head commit for this ${context.eventName} event is not ahead of the base commit. ` +
           "Please submit an issue on this action's GitHub repo."
