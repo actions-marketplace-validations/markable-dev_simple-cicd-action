@@ -1,4 +1,4 @@
-import execAction from '@actions/exec';
+import * as execAction from '@actions/exec';
 
 export const exec = async (commandLine: string, args?: string[], options: execAction.ExecOptions = {}) => {
   const outputBufList: Buffer[] = [];
