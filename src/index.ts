@@ -35,15 +35,8 @@ const getArrayInput = async (name: string, options?: core.InputOptions): Promise
 async function entry (id = 0) {
   const inputs = parseInputs();
   const { token } = inputs;
-  console.log(`Token matches: ${token === process.env.ACTIONS_RUNTIME_TOKEN}`)
-  const obj = getYamlInput('test-object');
-  console.log({
-    inputToken: (await getInput('token')).length,
-  });
   await exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
   await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
-  console.log(obj);
-  console.log(process.env)
   if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
     await exec('cat', [process.env.GITHUB_EVENT_PATH]);
   }
@@ -57,7 +50,7 @@ async function entry (id = 0) {
     const keys = Object.keys(comparision);
     core.info('Comparsion:');
     keys.forEach(key => {
-      core.info(`  ${key}: ${comparision[key]}`);
+      core.info(`  ${key}: ${JSON.stringify(comparision[key])}`);
     });
     return comparision;
   };

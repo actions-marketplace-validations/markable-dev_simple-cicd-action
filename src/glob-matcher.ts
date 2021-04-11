@@ -1,4 +1,5 @@
 import minimatch from 'minimatch';
+import * as core from '@actions/core';
 
 export class GlobMatcher {
   private globs: string[];
@@ -12,6 +13,8 @@ export class GlobMatcher {
       return [];
     }
 
-    return files.filter(file => this.globs.every(glob => minimatch(file, glob)));
+    const results = files.filter(file => this.globs.every(glob => minimatch(file, glob)));
+    core.debug(`Match ${JSON.stringify(files)} with "${this.globs.join(' ')}": ${JSON.stringify(results)}`);
+    return results;
   }
 }

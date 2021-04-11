@@ -19,12 +19,15 @@ jobs:
               - on:
                   files:
                   - key: ci
-                    files: '.github/*.yml'
+                    files:
+                    - '.github/**/*.yml'
+                    - '.github/**/*.yaml'
                     match: all
                   - key: action
                     files:
                     - "!.github"
                     - "**/*.js"
+                    - "**/*.ts"
                   branches:
                   - main
                   - dev
