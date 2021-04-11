@@ -14,10 +14,6 @@ jobs:
         id: hello
         with:
           token: ${{ github.token }}
-          test-object: |
-            key1: val1
-            val2: val2
-            ref: ${{ github.ref }}
           exec: |
             options:
               - on:
