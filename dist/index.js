@@ -15148,7 +15148,7 @@ const getArrayInput = (name, options) => __awaiter(void 0, void 0, void 0, funct
 function entry(id = 0) {
     return __awaiter(this, void 0, void 0, function* () {
         const inputs = inputs_1.parseInputs();
-        console.log(inputs);
+        console.log(inputs.exec.options);
         const { token } = inputs;
         // await exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
         // await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
