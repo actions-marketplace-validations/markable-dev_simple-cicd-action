@@ -7787,10 +7787,10 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
         return eventMatchers.some(eventMatcher => eventMatcher.match());
     });
     if (!pipe) {
-        core.debug(`Didn't find matched pipe.`);
+        core.info(`Didn't find matched pipe.`);
         return results;
     }
-    core.debug(`Matched pipe: ${JSON.stringify(pipe)}`);
+    core.info(`Matched pipe: ${JSON.stringify(pipe)}`);
     try {
         // Pick changed files
         for (var _b = __asyncValues(pipe.on.fileMatchers), _c; _c = yield _b.next(), !_c.done;) {

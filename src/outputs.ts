@@ -47,10 +47,10 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
     return eventMatchers.some(eventMatcher => eventMatcher.match());
   });
   if (!pipe) {
-    core.debug(`Didn't find matched pipe.`);
+    core.info(`Didn't find matched pipe.`);
     return results;
   }
-  core.debug(`Matched pipe: ${JSON.stringify(pipe)}`);
+  core.info(`Matched pipe: ${JSON.stringify(pipe)}`);
 
   // Pick changed files
   for await (const fileMatcher of pipe.on.fileMatchers) {
