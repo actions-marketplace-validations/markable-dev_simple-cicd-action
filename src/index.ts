@@ -3,7 +3,7 @@ import { FileChangingCollector } from './file-changing-collector';
 import { OctokitClient } from './octokit';
 import { parse } from './parse-yaml';
 import { OnFileChangeOpts, exporter } from './changing-exporter';
-import { echo, echoContext } from './echo';
+import { echo, echoContext, echoEnv } from './echo';
 
 const getInput = async (name: string, options?: core.InputOptions): Promise<string> => {
   let val = core.getInput(name, options);
@@ -43,8 +43,8 @@ async function entry (id = 0) {
   const obj = await getYamlInput('test-object');
   console.log({
     inputToken: (await getInput('token')).length,
-    token: ((await echo('github.token')) || '').length,
-    envToken: ((await echo('GITHUB_TOKEN')) || '').length,
+    token: ((await echoContext('github', 'token')) || '').length,
+    envToken: ((await echoEnv('GITHUB_TOKEN')) || '').length,
   });
   console.log(onFileChange);
   console.log(obj);
