@@ -31,7 +31,7 @@ const getArrayInput = async (name: string, options?: core.InputOptions): Promise
 
 async function entry (id = 0) {
   const inputs = parseInputs();
-  console.log(...inputs.exec.options)
+  console.dir(inputs.exec.options, { depth: 10 });
   const { token } = inputs;
   // await exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
   // await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
