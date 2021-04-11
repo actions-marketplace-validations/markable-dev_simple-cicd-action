@@ -21,7 +21,7 @@ export class RefMatcher {
   event: string;
   tags?: RefPattern[];
   branches?: RefPattern[];
-  private shouldMatch: boolean;
+  private matchRef: boolean;
 
   private static parsePattern (patterns?: string | string[]): RefPattern[] | undefined {
     if (typeof patterns === 'string') {
@@ -37,14 +37,14 @@ export class RefMatcher {
     this.event = event;
     this.branches = RefMatcher.parsePattern(patterns.branchPatterns);
     this.tags = RefMatcher.parsePattern(patterns.tagPatterns);
-    this.shouldMatch = Boolean(this.branches || this.tags);
+    this.matchRef = Boolean(this.branches || this.tags);
   }
 
   match (event: string = process.env.GITHUB_EVENT_NAME || '', ref: string | Ref = process.env.GITHUB_REF || ''): boolean {
     if (this.event !== event) {
       return false;
     }
-    if (!this.shouldMatch) {
+    if (!this.matchRef) {
       return true;
     }
 

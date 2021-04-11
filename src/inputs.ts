@@ -15,7 +15,7 @@ type OnChangesOptions = {
   fileMatchers: ChangedFileMatcher[],
   events: string[] | OnEvtChangesOptions,
   eventMatchers: RefMatcher[],
-} & OnRefChangesOptions;
+} & OnEvtChangesOptions;
 
 type ExecCondition = {
   on: OnChangesOptions,
@@ -79,20 +79,19 @@ const transformExecOptions = (execOptions: ExecInputCondition, index: number) =>
   }
   const onOptionsObj = onOptions as OnChangesOptions;
 
-  const eventAndRefKeys: string[] = [];
-  ['events', 'branches', 'tags'].forEach(key => {
-    if (onOptionsObj[key]) {
-      eventAndRefKeys.push(key);
-    }
-  });
-  if (!eventAndRefKeys.length) {
+  const onKeys = Object.keys(onOptions);
+  const definiedKeys = ['files', 'fileMatchers', 'events', 'eventMatchers'];
+
+  if (!onKeys.length) {
     throw new TypeError(`Expect input \`${getOptionKey('on')}\` to not be empty`);
   }
 
-  if (eventAndRefKeys.length > 1 && eventAndRefKeys.includes('events')) {
-    core.warning(`Conflict inputs: ${eventAndRefKeys}. Input ${getOnOptionKey('events')} will be used.`);
-  } else if (!eventAndRefKeys.includes('events')) {
-    onOptionsObj.events = eventAndRefKeys.reduce((acc, key) => {
+  const eventKeys = onKeys.filter(key => !definiedKeys.includes(key));
+
+  if (eventKeys.length && onOptionsObj.events) {
+    core.warning(`Conflict inputs: ${eventKeys}. Input ${getOnOptionKey('events')} will be used.`);
+  } else if (!onOptionsObj.events) {
+    onOptionsObj.events = eventKeys.reduce((acc, key) => {
       acc.events[key] = onOptionsObj[key];
       return acc;
     }, { events: {} as OnRefChangesOptions } as OnEvtChangesOptions);

@@ -3473,20 +3473,17 @@ const transformExecOptions = (execOptions, index) => {
         onOptions.events = onOptions.events || [];
     }
     const onOptionsObj = onOptions;
-    const eventAndRefKeys = [];
-    ['events', 'branches', 'tags'].forEach(key => {
-        if (onOptionsObj[key]) {
-            eventAndRefKeys.push(key);
-        }
-    });
-    if (!eventAndRefKeys.length) {
+    const onKeys = Object.keys(onOptions);
+    const definiedKeys = ['files', 'fileMatchers', 'events', 'eventMatchers'];
+    if (!onKeys.length) {
         throw new TypeError(`Expect input \`${getOptionKey('on')}\` to not be empty`);
     }
-    if (eventAndRefKeys.length > 1 && eventAndRefKeys.includes('events')) {
-        core.warning(`Conflict inputs: ${eventAndRefKeys}. Input ${getOnOptionKey('events')} will be used.`);
+    const eventKeys = onKeys.filter(key => !definiedKeys.includes(key));
+    if (eventKeys.length && onOptionsObj.events) {
+        core.warning(`Conflict inputs: ${eventKeys}. Input ${getOnOptionKey('events')} will be used.`);
     }
-    else if (!eventAndRefKeys.includes('events')) {
-        onOptionsObj.events = eventAndRefKeys.reduce((acc, key) => {
+    else if (!onOptionsObj.events) {
+        onOptionsObj.events = eventKeys.reduce((acc, key) => {
             acc.events[key] = onOptionsObj[key];
             return acc;
         }, { events: {} });
@@ -15015,7 +15012,7 @@ class RefMatcher {
         this.event = event;
         this.branches = RefMatcher.parsePattern(patterns.branchPatterns);
         this.tags = RefMatcher.parsePattern(patterns.tagPatterns);
-        this.shouldMatch = Boolean(this.branches || this.tags);
+        this.matchRef = Boolean(this.branches || this.tags);
     }
     static parsePattern(patterns) {
         if (typeof patterns === 'string') {
@@ -15030,7 +15027,7 @@ class RefMatcher {
         if (this.event !== event) {
             return false;
         }
-        if (!this.shouldMatch) {
+        if (!this.matchRef) {
             return true;
         }
         const { type, name } = ref_1.getRef(ref);

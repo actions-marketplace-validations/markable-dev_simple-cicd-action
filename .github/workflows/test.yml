@@ -26,9 +26,9 @@ jobs:
                     files:
                     - "!.github"
                     - "**/*.[tj]s"
-                  branches:
-                  - main
-                  - dev
-                  tags:
-                  - /v\d+\.\d+\.\d+$/
-
+                  push:
+                    branches:
+                    - main
+                    - dev
+                    tags:
+                    - /v\d+\.\d+\.\d+$/
