@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 import YAML from 'yaml';
 
 export const parse = <T>(content: string): T | undefined => {
