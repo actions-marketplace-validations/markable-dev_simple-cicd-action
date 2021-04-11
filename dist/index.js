@@ -13538,9 +13538,13 @@ const getYamlInput = (name, options) => __awaiter(void 0, void 0, void 0, functi
 });
 function entry(id = 0) {
     return __awaiter(this, void 0, void 0, function* () {
-        const token = yield getInput('token');
+        const token = (yield getInput('token')) || (yield echo_1.echo('github.token')) || '';
         const onFileChange = yield getYamlInput('on-files-change');
-        const obj = yield getInput('test-object');
+        const obj = yield getYamlInput('test-object');
+        console.log({
+            inputToken: (yield getInput('token')).length,
+            token: ((yield echo_1.echo('github.token')) || '').length,
+        });
         console.log(onFileChange);
         console.log(obj);
         core.info(JSON.stringify(onFileChange));
