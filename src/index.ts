@@ -4,6 +4,7 @@ import { OctokitClient } from './octokit';
 import { parse } from './parse-yaml';
 import { OnFileChangeOpts, exporter } from './changing-exporter';
 import { echo, echoContext, echoEnv } from './echo';
+import { exec } from './exec';
 
 const getInput = async (name: string, options?: core.InputOptions): Promise<string> => {
   let val = core.getInput(name, options);
@@ -44,9 +45,14 @@ async function entry (id = 0) {
   console.log({
     inputToken: (await getInput('token')).length,
   });
+  console.log(await exec('ls', ['/home/runner/work/_temp/_github_workflow/']));
+  console.log(await exec('ls', ['/home/runner/work/_temp/']));
   console.log(onFileChange);
   console.log(obj);
-  console.log(process.env.GITHUB_EVENT_PATH);
+  console.log(process.env)
+  if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
+    console.log(await import(process.env.GITHUB_EVENT_PATH))
+  }
 
   const octokit = OctokitClient.getInstance(token);
   const fileChangingCollector = new FileChangingCollector(octokit);

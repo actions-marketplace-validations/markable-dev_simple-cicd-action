@@ -1,27 +1,11 @@
-import * as exec from '@actions/exec';
 import * as core from '@actions/core';
+import { exec } from './exec';
 
 export const echo = async function (...params: string[]): Promise<string | undefined> {
-  const outputBufList: Buffer[] = [];
-  const errBufList: Buffer[] = [];
-
-  const options = {
-    listeners: {
-      stdout: (data: Buffer) => {
-        outputBufList.push(data);
-      },
-      stderr: (data: Buffer) => {
-        errBufList.push(data);
-      },
-    },
-    cwd: '.'
-  };
-
-  await exec.exec('echo', params, options);
-  const output = outputBufList.length ? Buffer.concat(outputBufList).toString() : undefined;
-  const error = errBufList.length && Buffer.concat(errBufList).toString();
-  error && core.setFailed(error);
-  return output;
+  return exec('echo', params)
+    .catch(error => {
+      core.setFailed(error.message)
+    }) as Promise<string | undefined>;
 };
 
 export const echoContext = async (context: string, varPath: string) =>

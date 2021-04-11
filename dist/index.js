@@ -7548,28 +7548,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.echoEnv = exports.echoSecret = exports.echoNeedsOutput = exports.echoStepOutput = exports.echoOutput = exports.echoNeeds = exports.echoStep = exports.echoContext = exports.echo = void 0;
-const exec = __importStar(__webpack_require__(514));
 const core = __importStar(__webpack_require__(186));
+const exec_1 = __webpack_require__(757);
 exports.echo = function (...params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const outputBufList = [];
-        const errBufList = [];
-        const options = {
-            listeners: {
-                stdout: (data) => {
-                    outputBufList.push(data);
-                },
-                stderr: (data) => {
-                    errBufList.push(data);
-                },
-            },
-            cwd: '.'
-        };
-        yield exec.exec('echo', params, options);
-        const output = outputBufList.length ? Buffer.concat(outputBufList).toString() : undefined;
-        const error = errBufList.length && Buffer.concat(errBufList).toString();
-        error && core.setFailed(error);
-        return output;
+        return exec_1.exec('echo', params)
+            .catch(error => {
+            core.setFailed(error.message);
+        });
     });
 };
 exports.echoContext = (context, varPath) => __awaiter(void 0, void 0, void 0, function* () { return exports.echo('$' + `{{${context}.${varPath}}}`); });
@@ -13185,6 +13171,52 @@ module.exports = require("fs");
 
 /***/ }),
 
+/***/ 757:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.exec = void 0;
+const exec_1 = __importDefault(__webpack_require__(514));
+exports.exec = (commandLine, args, options = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const outputBufList = [];
+    const errBufList = [];
+    options = Object.assign(options, {
+        listeners: {
+            stdout: (data) => {
+                outputBufList.push(data);
+            },
+            stderr: (data) => {
+                errBufList.push(data);
+            },
+        },
+        cwd: '.'
+    });
+    yield exec_1.default.exec(commandLine, args, options);
+    const output = outputBufList.length ? Buffer.concat(outputBufList).toString() : undefined;
+    const error = errBufList.length && Buffer.concat(errBufList).toString();
+    if (error) {
+        throw new Error(error);
+    }
+    return output;
+});
+//# sourceMappingURL=exec.js.map
+
+/***/ }),
+
 /***/ 761:
 /***/ (function(module) {
 
@@ -13487,6 +13519,7 @@ const octokit_1 = __webpack_require__(258);
 const parse_yaml_1 = __webpack_require__(197);
 const changing_exporter_1 = __webpack_require__(789);
 const echo_1 = __webpack_require__(431);
+const exec_1 = __webpack_require__(757);
 const getInput = (name, options) => __awaiter(void 0, void 0, void 0, function* () {
     let val = core.getInput(name, options);
     return val;
@@ -13526,9 +13559,14 @@ function entry(id = 0) {
         console.log({
             inputToken: (yield getInput('token')).length,
         });
+        console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/_github_workflow/']));
+        console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/']));
         console.log(onFileChange);
         console.log(obj);
-        console.log(process.env.GITHUB_EVENT_PATH);
+        console.log(process.env);
+        if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
+            console.log(yield Promise.resolve().then(() => __importStar(require(process.env.GITHUB_EVENT_PATH))));
+        }
         const octokit = octokit_1.OctokitClient.getInstance(token);
         const fileChangingCollector = new file_changing_collector_1.FileChangingCollector(octokit);
         const getComparision = (fileChangingCollector) => __awaiter(this, void 0, void 0, function* () {
