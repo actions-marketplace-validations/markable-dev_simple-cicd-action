@@ -21,13 +21,12 @@ jobs:
                   - key: ci
                     files:
                     - '.github/**/*.yml'
-                    - '.github/**/*.yaml'
+                    - '.github/**/*.y?(a)ml'
                     match: all
                   - key: action
                     files:
                     - "!.github"
-                    - "**/*.js"
-                    - "**/*.ts"
+                    - "**/*.[tj]s"
 
                   branches:
                   - main
