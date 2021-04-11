@@ -2,11 +2,11 @@ name: gnat-service/simple-cicd
 author: leaf4monkey
 description: A simplified CI pipeline tool
 inputs:
-  test-object:
-    description: 'Test object like text param'
-    required: false
   token:
     description: 'GitHub token'
+    required: false
+  test-object:
+    description: 'Test object like text param'
     required: false
   exec:
     description: 'A pipeline to decide how to export outputs to step level'
