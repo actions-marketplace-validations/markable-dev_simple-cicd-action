@@ -14512,7 +14512,7 @@ exports.getSelfRef = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     const envData = yield Promise.resolve().then(() => __importStar(require(eventPath)));
     if (envData.ref) {
-        return new Ref(envData);
+        return new Ref(envData.ref);
     }
     if (envData.pull_request) {
         console.log(envData);

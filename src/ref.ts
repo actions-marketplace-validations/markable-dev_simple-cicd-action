@@ -45,7 +45,7 @@ export const getSelfRef = async (): Promise<Ref> => {
 
   const envData = await import(eventPath);
   if (envData.ref) {
-    return new Ref(envData);
+    return new Ref(envData.ref);
   }
 
   if (envData.pull_request) {
