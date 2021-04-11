@@ -25,7 +25,7 @@ export const echo = async function (...params: string[]): Promise<string | undef
 };
 
 export const echoContext = async (context: string, varPath: string) =>
-  echo(`\${{${context}.${varPath}}}`);
+  echo('$' + `{{${context}.${varPath}}}`);
 
 export const echoStep = async (step: string, varPath: string) =>
   echoContext('steps', `${step}.${varPath}`);

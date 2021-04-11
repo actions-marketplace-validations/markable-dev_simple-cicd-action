@@ -7572,7 +7572,7 @@ exports.echo = function (...params) {
         return output;
     });
 };
-exports.echoContext = (context, varPath) => __awaiter(void 0, void 0, void 0, function* () { return exports.echo(`\${{${context}.${varPath}}}`); });
+exports.echoContext = (context, varPath) => __awaiter(void 0, void 0, void 0, function* () { return exports.echo('$' + `{{${context}.${varPath}}}`); });
 exports.echoStep = (step, varPath) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoContext('steps', `${step}.${varPath}`); });
 exports.echoNeeds = (job, varPath) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoContext('needs', `${job}.${varPath}`); });
 exports.echoOutput = (context, variable) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoContext(context, `outputs.${variable}`); });
