@@ -13525,13 +13525,10 @@ function entry(id = 0) {
         const obj = yield getYamlInput('test-object');
         console.log({
             inputToken: (yield getInput('token')).length,
-            token: ((yield echo_1.echoContext('github', 'token')) || ''),
-            envToken: ((yield echo_1.echoEnv('GITHUB_TOKEN')) || ''),
         });
         console.log(onFileChange);
         console.log(obj);
-        core.info(JSON.stringify(onFileChange));
-        core.info(JSON.stringify(obj));
+        console.log(process.env.GITHUB_EVENT_PATH);
         const octokit = octokit_1.OctokitClient.getInstance(token);
         const fileChangingCollector = new file_changing_collector_1.FileChangingCollector(octokit);
         const getComparision = (fileChangingCollector) => __awaiter(this, void 0, void 0, function* () {

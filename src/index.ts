@@ -43,13 +43,10 @@ async function entry (id = 0) {
   const obj = await getYamlInput('test-object');
   console.log({
     inputToken: (await getInput('token')).length,
-    token: ((await echoContext('github', 'token')) || ''),
-    envToken: ((await echoEnv('GITHUB_TOKEN')) || ''),
   });
   console.log(onFileChange);
   console.log(obj);
-  core.info(JSON.stringify(onFileChange))
-  core.info(JSON.stringify(obj));
+  console.log(process.env.GITHUB_EVENT_PATH);
 
   const octokit = OctokitClient.getInstance(token);
   const fileChangingCollector = new FileChangingCollector(octokit);
