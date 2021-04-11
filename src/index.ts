@@ -44,6 +44,7 @@ async function entry (id = 0) {
   console.log({
     inputToken: (await getInput('token')).length,
     token: ((await echo('github.token')) || '').length,
+    envToken: ((await echo('GITHUB_TOKEN')) || '').length,
   });
   console.log(onFileChange);
   console.log(obj);

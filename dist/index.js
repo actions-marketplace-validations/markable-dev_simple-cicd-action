@@ -7579,7 +7579,7 @@ exports.echoOutput = (context, variable) => __awaiter(void 0, void 0, void 0, fu
 exports.echoStepOutput = (step, variable) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoStep(step, `outputs.${variable}`); });
 exports.echoNeedsOutput = (job, variable) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoNeeds(job, `outputs.${variable}`); });
 exports.echoSecret = (secret) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoContext('secrets', secret); });
-exports.echoEnv = (env) => __awaiter(void 0, void 0, void 0, function* () { return exports.echoContext('env', env); });
+exports.echoEnv = (env) => __awaiter(void 0, void 0, void 0, function* () { return exports.echo('${' + env + '}'); });
 //# sourceMappingURL=echo.js.map
 
 /***/ }),
@@ -13526,6 +13526,7 @@ function entry(id = 0) {
         console.log({
             inputToken: (yield getInput('token')).length,
             token: ((yield echo_1.echo('github.token')) || '').length,
+            envToken: ((yield echo_1.echo('GITHUB_TOKEN')) || '').length,
         });
         console.log(onFileChange);
         console.log(obj);

@@ -46,4 +46,4 @@ export const echoSecret = async (secret: string) =>
   echoContext('secrets', secret);
 
 export const echoEnv = async (env: string) =>
-  echoContext('env', env);
+  echo('${' + env + '}');
