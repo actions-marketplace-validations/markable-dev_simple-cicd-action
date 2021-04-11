@@ -15013,8 +15013,8 @@ const parseRegex = (str) => {
 class RefMatcher {
     constructor(event, patterns) {
         this.event = event;
-        this.branches = RefMatcher.parsePattern(patterns.branchPatterns);
-        this.tags = RefMatcher.parsePattern(patterns.tagPatterns);
+        this.branches = RefMatcher.parsePattern(patterns === null || patterns === void 0 ? void 0 : patterns.branches);
+        this.tags = RefMatcher.parsePattern(patterns === null || patterns === void 0 ? void 0 : patterns.tags);
         this.matchRef = Boolean(this.branches || this.tags);
     }
     static parsePattern(patterns) {

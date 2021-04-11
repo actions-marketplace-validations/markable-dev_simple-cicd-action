@@ -3,8 +3,8 @@ import { getRef, Ref } from './ref';
 const REGEX_REG = /^\/(.+)\/(\w+)?$/;
 
 type Patterns = {
-  branchPatterns?: string | string[],
-  tagPatterns?: string | string[],
+  branches?: string | string[],
+  tags?: string | string[],
 }
 
 type RefPattern = string | RegExp;
@@ -33,10 +33,10 @@ export class RefMatcher {
     return patterns.map(parseRegex);
   }
 
-  constructor (event: string, patterns: Patterns) {
+  constructor (event: string, patterns?: Patterns) {
     this.event = event;
-    this.branches = RefMatcher.parsePattern(patterns.branchPatterns);
-    this.tags = RefMatcher.parsePattern(patterns.tagPatterns);
+    this.branches = RefMatcher.parsePattern(patterns?.branches);
+    this.tags = RefMatcher.parsePattern(patterns?.tags);
     this.matchRef = Boolean(this.branches || this.tags);
   }
 
