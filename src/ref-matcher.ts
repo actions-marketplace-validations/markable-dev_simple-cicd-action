@@ -21,7 +21,7 @@ const parseRegex = (str: string): RefPattern => {
 export class RefMatcher {
   event: string;
   tags?: RefPattern[];
-  branches?: RefPattern[];
+  heads?: RefPattern[];
   private matchRef: boolean;
 
   private static parsePattern (patterns?: string | string[]): RefPattern[] | undefined {
@@ -36,9 +36,9 @@ export class RefMatcher {
 
   constructor (event: string, patterns?: Patterns) {
     this.event = event;
-    this.branches = RefMatcher.parsePattern(patterns?.branches);
+    this.heads = RefMatcher.parsePattern(patterns?.branches);
     this.tags = RefMatcher.parsePattern(patterns?.tags);
-    this.matchRef = Boolean(this.branches || this.tags);
+    this.matchRef = Boolean(this.heads || this.tags);
   }
 
   match (event: string = process.env.GITHUB_EVENT_NAME || '', ref: string | Ref = process.env.GITHUB_REF || ''): boolean {

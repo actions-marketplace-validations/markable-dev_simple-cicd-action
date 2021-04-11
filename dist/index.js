@@ -15033,9 +15033,9 @@ const parseRegex = (str) => {
 class RefMatcher {
     constructor(event, patterns) {
         this.event = event;
-        this.branches = RefMatcher.parsePattern(patterns === null || patterns === void 0 ? void 0 : patterns.branches);
+        this.heads = RefMatcher.parsePattern(patterns === null || patterns === void 0 ? void 0 : patterns.branches);
         this.tags = RefMatcher.parsePattern(patterns === null || patterns === void 0 ? void 0 : patterns.tags);
-        this.matchRef = Boolean(this.branches || this.tags);
+        this.matchRef = Boolean(this.heads || this.tags);
     }
     static parsePattern(patterns) {
         if (typeof patterns === 'string') {
