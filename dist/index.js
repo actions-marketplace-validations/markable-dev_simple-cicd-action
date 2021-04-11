@@ -15201,7 +15201,7 @@ function run() {
             yield entry();
         }
         catch (error) {
-            core.debug(error.stack);
+            console.error(error.stack);
             core.setFailed(error.message);
         }
     });

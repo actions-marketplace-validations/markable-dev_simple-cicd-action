@@ -82,7 +82,7 @@ async function run(): Promise<void> {
   try {
     await entry();
   } catch (error) {
-    core.debug(error.stack);
+    console.error(error.stack);
     core.setFailed(error.message);
   }
 };
