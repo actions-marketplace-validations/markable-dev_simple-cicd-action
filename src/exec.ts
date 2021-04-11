@@ -4,7 +4,7 @@ export const exec = async (commandLine: string, args?: string[], options: execAc
   const outputBufList: Buffer[] = [];
   const errBufList: Buffer[] = [];
 
-  options = Object.assign(options, {
+  options = Object.assign({
     listeners: {
       stdout: (data: Buffer) => {
         outputBufList.push(data);
@@ -14,7 +14,7 @@ export const exec = async (commandLine: string, args?: string[], options: execAc
       },
     },
     cwd: '.'
-  });
+  }, options);
 
   await execAction.exec(commandLine, args, options);
   const output = outputBufList.length ? Buffer.concat(outputBufList).toString() : undefined;

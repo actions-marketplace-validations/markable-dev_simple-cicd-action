@@ -13210,7 +13210,7 @@ const execAction = __importStar(__webpack_require__(514));
 exports.exec = (commandLine, args, options = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const outputBufList = [];
     const errBufList = [];
-    options = Object.assign(options, {
+    options = Object.assign({
         listeners: {
             stdout: (data) => {
                 outputBufList.push(data);
@@ -13220,7 +13220,7 @@ exports.exec = (commandLine, args, options = {}) => __awaiter(void 0, void 0, vo
             },
         },
         cwd: '.'
-    });
+    }, options);
     yield execAction.exec(commandLine, args, options);
     const output = outputBufList.length ? Buffer.concat(outputBufList).toString() : undefined;
     const error = errBufList.length && Buffer.concat(errBufList).toString();
@@ -13575,13 +13575,13 @@ function entry(id = 0) {
         console.log({
             inputToken: (yield getInput('token')).length,
         });
-        console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/_github_workflow/']));
-        console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/_runner_file_commands']));
+        yield exec_1.exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
+        yield exec_1.exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
         console.log(onFileChange);
         console.log(obj);
         console.log(process.env);
         if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
-            console.log(yield exec_1.exec('cat', [process.env.GITHUB_EVENT_PATH]));
+            yield exec_1.exec('cat', [process.env.GITHUB_EVENT_PATH]);
         }
         const octokit = octokit_1.OctokitClient.getInstance(token);
         const fileChangingCollector = new file_changing_collector_1.FileChangingCollector(octokit);
