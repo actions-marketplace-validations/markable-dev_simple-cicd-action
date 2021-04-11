@@ -40,7 +40,11 @@ const getYamlInput = async <T = object>(name: string, options?: core.InputOption
 async function entry (id = 0) {
   const token = (await getInput('token')) || (await echo('github.token')) || '';
   const onFileChange = await getYamlInput<OnFileChangeOpts>('on-files-change');
-  const obj = await getInput('test-object');
+  const obj = await getYamlInput('test-object');
+  console.log({
+    inputToken: (await getInput('token')).length,
+    token: ((await echo('github.token')) || '').length,
+  });
   console.log(onFileChange);
   console.log(obj);
   core.info(JSON.stringify(onFileChange))
