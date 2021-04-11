@@ -3701,17 +3701,31 @@ exports.getYamlInput = (name, options) => {
     return Array.isArray(val) ? val : [val];
 };
 const transformExecOptions = (execOptions, index) => {
-    const { on: onOptions } = execOptions;
+    let { on: onOptions } = execOptions;
     const optionKeyPrefix = `exec[${index}].`;
     const getOptionKey = (name) => `${optionKeyPrefix}${name}`;
     const getOnOptionKey = (name) => getOptionKey(`on.${name}`);
     if (!onOptions) {
         throw new TypeError(`Expect input \`${getOptionKey('on')}\` to not be empty`);
     }
+    if (typeof onOptions === 'string') {
+        onOptions = [onOptions];
+    }
+    if (Array.isArray(onOptions)) {
+        onOptions = onOptions.reduce((acc, key) => {
+            if (key === 'files') {
+                core.setFailed(`Input \`${getOnOptionKey('files')}\` cannot be shorthand string value.`);
+            }
+            return Object.assign(acc, { [key]: {} });
+        }, {});
+        onOptions.files = onOptions.files || [];
+        onOptions.events = onOptions.events || [];
+    }
+    const onOptionsObj = onOptions;
     const eventAndRefKeys = [];
     ['events', 'branches', 'tags'].forEach(key => {
-        if (onOptions[key]) {
-            eventAndRefKeys.push(getOnOptionKey(key));
+        if (onOptionsObj[key]) {
+            eventAndRefKeys.push(key);
         }
     });
     if (!eventAndRefKeys.length) {
@@ -3721,18 +3735,18 @@ const transformExecOptions = (execOptions, index) => {
         core.warning(`Conflict inputs: ${eventAndRefKeys}. Input ${getOnOptionKey('events')} will be used.`);
     }
     else if (!eventAndRefKeys.includes('events')) {
-        onOptions.events = eventAndRefKeys.reduce((acc, key) => {
-            acc.events[key] = onOptions[key];
+        onOptionsObj.events = eventAndRefKeys.reduce((acc, key) => {
+            acc.events[key] = onOptionsObj[key];
             return acc;
         }, { events: {} });
     }
-    if (Array.isArray(onOptions.events)) {
-        onOptions.events = onOptions.events.reduce((acc, key) => {
+    if (Array.isArray(onOptionsObj.events)) {
+        onOptionsObj.events = onOptionsObj.events.reduce((acc, key) => {
             return Object.assign(acc, { [key]: {} });
         }, {});
     }
-    onOptions.fileMatchers = (onOptions.files || []).map((options) => new changing_exporter_1.ChangedFileMatcher(options.key, options));
-    onOptions.eventMatchers = Object.keys(onOptions.events).map((event) => new ref_matcher_1.RefMatcher(event, onOptions.events[event]));
+    onOptionsObj.fileMatchers = (onOptionsObj.files || []).map((options) => new changing_exporter_1.ChangedFileMatcher(options.key, options));
+    onOptionsObj.eventMatchers = Object.keys(onOptionsObj.events).map((event) => new ref_matcher_1.RefMatcher(event, onOptionsObj.events[event]));
 };
 const getInputs = () => {
     const token = getInput('token', { required: true });
@@ -3756,7 +3770,7 @@ exports.parseInputs = ({ exec, token } = getInputs()) => {
     });
     return {
         token,
-        exec,
+        exec: exec,
     };
 };
 //# sourceMappingURL=inputs.js.map

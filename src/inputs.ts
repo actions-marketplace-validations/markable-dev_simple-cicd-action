@@ -17,6 +17,11 @@ type OnChangesOptions = {
   eventMatchers: RefMatcher[],
 } & OnRefChangesOptions;
 
+type ExecInputOptions = {
+  on: OnChangesOptions | string | string[],
+  key?: string,
+};
+
 type ExecOptions = {
   on: OnChangesOptions,
   key?: string,
@@ -42,18 +47,34 @@ export const getYamlInput = <T = object>(name: string, options?: core.InputOptio
   return Array.isArray(val) ? val : [val as T];
 };
 
-const transformExecOptions = (execOptions: ExecOptions, index: number) => {
-  const { on: onOptions } = execOptions;
+const transformExecOptions = (execOptions: ExecInputOptions, index: number) => {
+  let { on: onOptions } = execOptions;
   const optionKeyPrefix = `exec[${index}].`;
   const getOptionKey = (name: string): string => `${optionKeyPrefix}${name}`;
   const getOnOptionKey = (name: string): string => getOptionKey(`on.${name}`);
   if (!onOptions) {
     throw new TypeError(`Expect input \`${getOptionKey('on')}\` to not be empty`);
   }
+
+  if (typeof onOptions === 'string') {
+    onOptions = [onOptions];
+  }
+  if (Array.isArray(onOptions)) {
+    onOptions = onOptions.reduce((acc, key) => {
+      if (key === 'files') {
+        core.setFailed(`Input \`${getOnOptionKey('files')}\` cannot be shorthand string value.`);
+      }
+      return Object.assign(acc, { [key]: {} });
+    }, {} as OnChangesOptions);
+    onOptions.files = onOptions.files || [];
+    onOptions.events = onOptions.events || [];
+  }
+  const onOptionsObj = onOptions as OnChangesOptions;
+
   const eventAndRefKeys: string[] = [];
   ['events', 'branches', 'tags'].forEach(key => {
-    if (onOptions[key]) {
-      eventAndRefKeys.push(getOnOptionKey(key));
+    if (onOptionsObj[key]) {
+      eventAndRefKeys.push(key);
     }
   });
   if (!eventAndRefKeys.length) {
@@ -63,26 +84,26 @@ const transformExecOptions = (execOptions: ExecOptions, index: number) => {
   if (eventAndRefKeys.length > 1 && eventAndRefKeys.includes('events')) {
     core.warning(`Conflict inputs: ${eventAndRefKeys}. Input ${getOnOptionKey('events')} will be used.`);
   } else if (!eventAndRefKeys.includes('events')) {
-    onOptions.events = eventAndRefKeys.reduce((acc, key) => {
-      acc.events[key] = onOptions[key];
+    onOptionsObj.events = eventAndRefKeys.reduce((acc, key) => {
+      acc.events[key] = onOptionsObj[key];
       return acc;
     }, { events: {} as OnRefChangesOptions } as OnEvtChangesOptions);
   }
-  if (Array.isArray(onOptions.events)) {
-    onOptions.events = onOptions.events.reduce((acc, key) => {
+  if (Array.isArray(onOptionsObj.events)) {
+    onOptionsObj.events = onOptionsObj.events.reduce((acc, key) => {
       return Object.assign(acc, { [key]: {} });
     }, {});
   }
 
-  onOptions.fileMatchers = (onOptions.files || []).map((options: OnFileChangeOpts) => new ChangedFileMatcher(options.key, options));
-  onOptions.eventMatchers = Object.keys(onOptions.events).map((event: string) =>
-    new RefMatcher(event, onOptions.events[event])
+  onOptionsObj.fileMatchers = (onOptionsObj.files || []).map((options: OnFileChangeOpts) => new ChangedFileMatcher(options.key, options));
+  onOptionsObj.eventMatchers = Object.keys(onOptionsObj.events).map((event: string) =>
+    new RefMatcher(event, onOptionsObj.events[event])
   );
 };
 
 const getInputs = () => {
   const token = getInput('token', { required: true });
-  const exec = getYamlInput<ExecOptions>('exec', { required: true });
+  const exec = getYamlInput<ExecInputOptions>('exec', { required: true });
   return {
     token,
     exec,
@@ -105,6 +126,6 @@ export const parseInputs = ({ exec, token } = getInputs()): Inputs => {
 
   return {
     token,
-    exec,
+    exec: exec as ExecOptions[],
   };
 };
