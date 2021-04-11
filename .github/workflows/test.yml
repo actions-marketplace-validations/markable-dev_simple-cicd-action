@@ -13,11 +13,11 @@ jobs:
         uses: ./ # Uses an action in the root directory
         id: hello
         with:
+          token: ''
           test-object: |
             key1: val1
             val2: val2
             ref: ${{ github.ref }}
-          token: ''
           exec: |
             options:
             - on:
