@@ -1,14 +1,74 @@
 import * as core from '@actions/core';
-import { context, getOctokit } from '@actions/github';
-import { FileChangingCollector, FileStatusOrAll } from './file-changing-collector';
-import { GlobMatcherOptions, GlobMatcher } from './glob-matcher';
+import { FileChangingCollector } from './file-changing-collector';
 import { OctokitClient } from './octokit';
 import { parse } from './parse-yaml';
+import { OnFileChangeOpts, exporter } from './changing-exporter';
+import { echo } from './echo';
 
-type OnFileChangeOpts = {
-  globber?: GlobMatcher;
-  changeTypes?: FileStatusOrAll | FileStatusOrAll[];
-} & GlobMatcherOptions;
+const getInput = async (name: string, options?: core.InputOptions): Promise<string> => {
+  let val = core.getInput(name, options);
+  const patterns = val.match(/\$\{\{ *[^ ]+ *\}\}/gm);
+  if (!patterns) {
+    return val;
+  }
+  for await (const ptn of patterns) {
+    const match = ptn.match(/\$\{\{ *([^ ]+) *\}\}/);
+    const str = match ? (await echo(match[1])) : '';
+    val = val.replace(ptn, str || '');
+  }
+  return val;
+};
+const getArrayInput = async (name: string, options?: core.InputOptions): Promise<string[]> => {
+  const ret = await getInput(name, options);
+  if (Array.isArray(ret)) {
+    return ret;
+  }
+  if (typeof ret === 'string') {
+    return ret.split('\n');
+  }
+  return [ret];
+};
+const getYamlInput = async <T = object>(name: string, options?: core.InputOptions): Promise<T[]> => {
+  const ret = await getInput(name, options);
+  if (!ret) {
+    return [];
+  }
+  const val = parse(ret);
+  return Array.isArray(val) ? val : [val as T];
+};
+
+async function entry (id = 0) {
+  const token = await getInput('token');
+  const onFileChange = await getYamlInput<OnFileChangeOpts>('on-files-change');
+  const obj = await getInput('test-object');
+  console.log(onFileChange);
+  console.log(obj);
+  core.info(JSON.stringify(onFileChange))
+  core.info(JSON.stringify(obj));
+
+  const octokit = OctokitClient.getInstance(token);
+  const fileChangingCollector = new FileChangingCollector(octokit);
+
+  const getComparision = async (fileChangingCollector: FileChangingCollector) => {
+    const comparision = await fileChangingCollector.getComparision();
+
+    const keys = Object.keys(comparision);
+    core.info('Comparsion:');
+    keys.forEach(key => {
+      core.info(`  ${key}: ${comparision[key]}`);
+    });
+    return comparision;
+  };
+  const comparision = await getComparision(fileChangingCollector);
+
+  const { exportByKeys, changedFiles } = exporter(comparision, onFileChange);
+
+  const keys = Object.keys(exportByKeys);
+  core.setOutput('id', id);
+  core.setOutput('keys', JSON.stringify(keys));
+  core.setOutput('changed_files', JSON.stringify(changedFiles));
+  core.info(JSON.stringify(exportByKeys, null, 2));
+};
 
 async function run(): Promise<void> {
   // Languages:
@@ -32,59 +92,7 @@ async function run(): Promise<void> {
   //       4.1.1 Command lines
   //       4.1.2 ArgoCD
   //       4.1.3 Helm
-
-  const getInput = (name: string, options?: core.InputOptions): string => {
-    return core.getInput(name, options);
-  };
-  const getArrayInput = (name: string, options?: core.InputOptions): string[] => {
-    const ret = getInput(name, options);
-    if (Array.isArray(ret)) {
-      return ret;
-    }
-    if (typeof ret === 'string') {
-      return ret.split('\n');
-    }
-    return [ret];
-  };
-  const getYamlInput = <T = object>(name: string, options?: core.InputOptions): T[] => {
-    const ret = getInput(name, options);
-    if (!ret) {
-      return [];
-    }
-    const val = parse(ret);
-    return Array.isArray(val) ? val : [val as T];
-  };
-  const token = getInput('token');
-  const onFileChange = getYamlInput<OnFileChangeOpts>('on-files-change');
-
-  const octokit = OctokitClient.getInstance(token);
-  const fileChangingCollector = new FileChangingCollector(octokit);
-
-  const getComparision = async (fileChangingCollector: FileChangingCollector) => {
-    const comparision = await fileChangingCollector.getComparision();
-
-    const keys = Object.keys(comparision);
-    core.info('Comparsion:');
-    keys.forEach(key => {
-      core.info(`  ${key}: ${comparision[key]}`);
-    });
-    return comparision;
-  };
-
-  const comparision = await getComparision(fileChangingCollector);
-
-  const globbers = onFileChange.map(opt => {
-    if (opt.files) {
-      opt.globber = new GlobMatcher(opt.files);
-    }
-    opt.changeTypes = opt.changeTypes || 'all';
-    if (!Array.isArray(opt.changeTypes)) {
-      opt.changeTypes = [opt.changeTypes];
-    } else if (opt.changeTypes.length > 1 && opt.changeTypes.includes('all')) {
-      opt.changeTypes = ['all'];
-    }
-    opt.matches = opt.changeTypes.reduce((acc: string[], changeType: string): string[] => acc.concat(comparision[changeType]), []);
-  });
+  entry();
 };
 
 run();

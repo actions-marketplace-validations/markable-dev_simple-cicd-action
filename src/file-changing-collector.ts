@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { OctokitClient } from './octokit';
 
-type Comparision = {
+export type Comparision = {
   all: string[];
   added: string[];
   modified: string[];

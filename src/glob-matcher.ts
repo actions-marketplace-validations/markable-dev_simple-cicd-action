@@ -2,7 +2,6 @@ import * as minimatch from 'minimatch';
 
 export type GlobMatcherOptions = {
   files?: string[];
-  matches?: string[];
 };
 
 export class GlobMatcher {
