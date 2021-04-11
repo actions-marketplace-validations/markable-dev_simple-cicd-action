@@ -20,18 +20,18 @@ jobs:
             ref: ${{ github.ref }}
           exec: |
             options:
-            - on:
-                files:
-                - key: ci
-                  files: '.github/*.yml'
-                  match: all
-                - key: action
+              - on:
                   files:
-                  - "!.github"
-                  - **/*.js
-                branches:
-                - main
-                - dev
-                tags:
-                - /v\d+\.\d+\.\d+$/
+                  - key: ci
+                    files: '.github/*.yml'
+                    match: all
+                  - key: action
+                    files:
+                    - "!.github"
+                    - **/*.js
+                  branches:
+                  - main
+                  - dev
+                  tags:
+                  - /v\d+\.\d+\.\d+$/
 
