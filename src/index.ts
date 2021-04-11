@@ -38,7 +38,7 @@ const getYamlInput = async <T = object>(name: string, options?: core.InputOption
 };
 
 async function entry (id = 0) {
-  const token = await getInput('token');
+  const token = (await getInput('token')) || (await echo('github.token')) || '';
   const onFileChange = await getYamlInput<OnFileChangeOpts>('on-files-change');
   const obj = await getInput('test-object');
   console.log(onFileChange);
