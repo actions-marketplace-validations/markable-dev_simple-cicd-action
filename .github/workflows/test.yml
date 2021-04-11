@@ -24,7 +24,7 @@ jobs:
                   - key: action
                     files:
                     - "!.github"
-                    - **/*.js
+                    - "**/*.js"
                   branches:
                   - main
                   - dev
