@@ -7813,7 +7813,7 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
 });
 exports.exec = (inputs, comparision) => __awaiter(void 0, void 0, void 0, function* () {
     const results = yield exports.parse(inputs, comparision);
-    core.info(`Set output keys:`);
+    core.info(`Set outputs:`);
     Object.keys(results).forEach(key => {
         const val = results[key];
         if (typeof val === 'string') {
@@ -15197,6 +15197,7 @@ function run() {
         //       4.1.1 Command lines
         //       4.1.2 ArgoCD
         //       4.1.3 Helm
+        core.info(`Debug: ${core.isDebug()}`);
         try {
             yield entry();
         }

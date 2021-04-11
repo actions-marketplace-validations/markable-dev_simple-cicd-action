@@ -70,7 +70,7 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
 
 export const exec = async (inputs: Inputs, comparision: Comparision) => {
   const results = await parse(inputs, comparision);
-  core.info(`Set output keys:`);
+  core.info(`Set outputs:`);
   Object.keys(results).forEach(key => {
     const val = results[key];
     if (typeof val === 'string') {

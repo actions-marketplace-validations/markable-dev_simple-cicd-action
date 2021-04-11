@@ -79,6 +79,7 @@ async function run(): Promise<void> {
   //       4.1.1 Command lines
   //       4.1.2 ArgoCD
   //       4.1.3 Helm
+  core.info(`Debug: ${core.isDebug()}`);
   try {
     await entry();
   } catch (error) {
