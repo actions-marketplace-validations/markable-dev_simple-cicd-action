@@ -7798,8 +7798,8 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
             const matches = fileMatcher.match(comparision);
             if (matches.all.length && !results.keys.includes(fileMatcher.key)) {
                 results.keys.push(fileMatcher.key);
+                results.matches.push(Object.assign({ key: fileMatcher.key, changed: matches }, refData));
             }
-            results.matches.push(Object.assign({ key: fileMatcher.key, changed: matches }, refData));
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }

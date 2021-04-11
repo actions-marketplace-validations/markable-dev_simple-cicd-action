@@ -57,12 +57,12 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
     const matches = fileMatcher.match(comparision);
     if (matches.all.length && !results.keys.includes(fileMatcher.key)) {
       results.keys.push(fileMatcher.key);
+      results.matches.push({
+        key: fileMatcher.key,
+        changed: matches,
+        ...refData,
+      });
     }
-    results.matches.push({
-      key: fileMatcher.key,
-      changed: matches,
-      ...refData,
-    })
   }
 
   return results;
