@@ -74,13 +74,14 @@ const transformExecOptions = (execOptions: ExecInputCondition, index: number) =>
       }
       return Object.assign(acc, { [key]: {} });
     }, {} as OnChangesOptions);
-    onOptions.files = onOptions.files || [];
-    onOptions.events = onOptions.events || {};
-    if (Array.isArray(onOptions.events)) {
-      onOptions.events = onOptions.events.reduce((acc, key) => {
-        return Object.assign(acc, { [key]: {} })
-      }, {});
-    }
+  }
+
+  onOptions.files = onOptions.files || [];
+  onOptions.events = onOptions.events || {};
+  if (Array.isArray(onOptions.events)) {
+    onOptions.events = onOptions.events.reduce((acc, key) => {
+      return Object.assign(acc, { [key]: {} })
+    }, {});
   }
   const onOptionsObj = onOptions as OnChangesOptions;
 

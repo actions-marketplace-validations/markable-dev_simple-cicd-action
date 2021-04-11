@@ -3469,13 +3469,13 @@ const transformExecOptions = (execOptions, index) => {
             }
             return Object.assign(acc, { [key]: {} });
         }, {});
-        onOptions.files = onOptions.files || [];
-        onOptions.events = onOptions.events || {};
-        if (Array.isArray(onOptions.events)) {
-            onOptions.events = onOptions.events.reduce((acc, key) => {
-                return Object.assign(acc, { [key]: {} });
-            }, {});
-        }
+    }
+    onOptions.files = onOptions.files || [];
+    onOptions.events = onOptions.events || {};
+    if (Array.isArray(onOptions.events)) {
+        onOptions.events = onOptions.events.reduce((acc, key) => {
+            return Object.assign(acc, { [key]: {} });
+        }, {});
     }
     const onOptionsObj = onOptions;
     const onKeys = Object.keys(onOptions);
