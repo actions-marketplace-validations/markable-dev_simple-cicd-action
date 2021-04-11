@@ -28,6 +28,7 @@ jobs:
                     - "!.github"
                     - "**/*.js"
                     - "**/*.ts"
+
                   branches:
                   - main
                   - dev

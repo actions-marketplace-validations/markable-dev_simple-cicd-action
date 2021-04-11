@@ -1,11 +1,8 @@
 import * as core from '@actions/core';
 import { FileChangingCollector } from './file-changing-collector';
 import { OctokitClient } from './octokit';
-import { parse } from './parse-yaml';
-import { OnFileChangeOpts, exporter } from './changing-exporter';
-import { echo, echoContext, echoEnv } from './echo';
 import { exec } from './exec';
-import { getYamlInput, parseInputs } from './inputs';
+import { parseInputs } from './inputs';
 import * as outputs from './outputs';
 
 const getInput = async (name: string, options?: core.InputOptions): Promise<string> => {
