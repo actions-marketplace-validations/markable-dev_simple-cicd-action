@@ -13525,8 +13525,8 @@ function entry(id = 0) {
         const obj = yield getYamlInput('test-object');
         console.log({
             inputToken: (yield getInput('token')).length,
-            token: ((yield echo_1.echoContext('github', 'token')) || '').length,
-            envToken: ((yield echo_1.echoEnv('GITHUB_TOKEN')) || '').length,
+            token: ((yield echo_1.echoContext('github', 'token')) || ''),
+            envToken: ((yield echo_1.echoEnv('GITHUB_TOKEN')) || ''),
         });
         console.log(onFileChange);
         console.log(obj);

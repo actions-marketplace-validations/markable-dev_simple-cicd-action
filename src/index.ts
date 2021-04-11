@@ -43,8 +43,8 @@ async function entry (id = 0) {
   const obj = await getYamlInput('test-object');
   console.log({
     inputToken: (await getInput('token')).length,
-    token: ((await echoContext('github', 'token')) || '').length,
-    envToken: ((await echoEnv('GITHUB_TOKEN')) || '').length,
+    token: ((await echoContext('github', 'token')) || ''),
+    envToken: ((await echoEnv('GITHUB_TOKEN')) || ''),
   });
   console.log(onFileChange);
   console.log(obj);
