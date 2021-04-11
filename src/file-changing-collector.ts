@@ -21,6 +21,7 @@ export class FileChangingCollector {
     removed: [],
     renamed: [],
   } as Comparision;
+  public static ALL_FILE_STATUSES: FileStatus[] = ['added', 'modified', 'removed', 'renamed'];
   private compared = false;
 
   constructor (client: OctokitClient) {

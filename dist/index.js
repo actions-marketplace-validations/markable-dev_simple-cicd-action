@@ -8340,6 +8340,7 @@ class FileChangingCollector {
     }
 }
 exports.FileChangingCollector = FileChangingCollector;
+FileChangingCollector.ALL_FILE_STATUSES = ['added', 'modified', 'removed', 'renamed'];
 //# sourceMappingURL=file-changing-collector.js.map
 
 /***/ }),
@@ -14962,17 +14963,17 @@ module.exports = parseOptions
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.exporter = exports.ChangedFileMatcher = void 0;
+const file_changing_collector_1 = __webpack_require__(437);
 const glob_matcher_1 = __webpack_require__(171);
 class ChangedFileMatcher {
     constructor(key, options) {
-        const match = options.match || 'all';
-        this.matches = typeof match === 'string' ? [match] : match;
+        const match = typeof options.match === 'string' ? [options.match] : (options.match || ['all']);
+        this.matches = match.includes('all') ? file_changing_collector_1.FileChangingCollector.ALL_FILE_STATUSES : match;
         this.key = key;
         this.globber = new glob_matcher_1.GlobMatcher(typeof options.files === 'string' ? options.files.split(' ') : options.files);
     }
     match(comparision) {
-        const allChangedTypes = Object.keys(comparision);
-        const changedFiles = allChangedTypes.reduce((acc, type) => Object.assign(acc, { [type]: [] }), { added_modified: [] });
+        const changedFiles = file_changing_collector_1.FileChangingCollector.ALL_FILE_STATUSES.reduce((acc, type) => Object.assign(acc, { [type]: [] }), { added_modified: [], all: [] });
         this.matches.forEach(changeType => {
             var _a;
             changedFiles[changeType] = ((_a = this.globber) === null || _a === void 0 ? void 0 : _a.match(comparision[changeType])) || [];

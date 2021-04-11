@@ -1,4 +1,4 @@
-import { Comparision, FileStatusOrAll } from "./file-changing-collector";
+import { Comparision, FileStatus, FileStatusOrAll, FileChangingCollector } from "./file-changing-collector";
 import { GlobMatcher } from "./glob-matcher";
 
 export type OnFileChangeOpts = {
@@ -14,18 +14,17 @@ export class ChangedFileMatcher {
   private globber: GlobMatcher;
 
   constructor (key: string, options: OnFileChangeOpts) {
-    const match = options.match || 'all';
-    this.matches = typeof match === 'string' ? [match] : match;
+    const match = typeof options.match === 'string' ? [options.match] : (options.match || ['all']);
+    this.matches = match.includes('all') ? FileChangingCollector.ALL_FILE_STATUSES : match;
     this.key = key;
     this.globber = new GlobMatcher(typeof options.files === 'string' ? options.files.split(' ') : options.files);
   }
 
   match (comparision: Comparision) {
-    const allChangedTypes = Object.keys(comparision);
-    const changedFiles = allChangedTypes.reduce(
+    const changedFiles = FileChangingCollector.ALL_FILE_STATUSES.reduce(
       (acc, type) => Object.assign(acc, { [type]: [] }),
-      { added_modified: [] }
-    ) as unknown as Comparision & { added_modified: string[] };
+      { added_modified: [], all: [] } as unknown as Comparision & { added_modified: string[] }
+    );
 
     this.matches.forEach(changeType => {
       changedFiles[changeType] = this.globber?.match(comparision[changeType]) || [];
