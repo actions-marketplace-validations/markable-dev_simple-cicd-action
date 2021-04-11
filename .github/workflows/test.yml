@@ -27,7 +27,7 @@ jobs:
                   match: all
                 - key: action
                   files:
-                  - !.github
+                  - "!.github"
                   - **/*.js
                 branches:
                 - main
