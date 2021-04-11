@@ -5,6 +5,8 @@ import { parse } from './parse-yaml';
 import { OnFileChangeOpts, exporter } from './changing-exporter';
 import { echo, echoContext, echoEnv } from './echo';
 import { exec } from './exec';
+import { getYamlInput, parseInputs } from './inputs';
+import * as outputs from './outputs';
 
 const getInput = async (name: string, options?: core.InputOptions): Promise<string> => {
   let val = core.getInput(name, options);
@@ -29,25 +31,17 @@ const getArrayInput = async (name: string, options?: core.InputOptions): Promise
   }
   return [ret];
 };
-const getYamlInput = async <T = object>(name: string, options?: core.InputOptions): Promise<T[]> => {
-  const ret = await getInput(name, options);
-  if (!ret) {
-    return [];
-  }
-  const val = parse(ret);
-  return Array.isArray(val) ? val : [val as T];
-};
 
 async function entry (id = 0) {
-  const token = (await getInput('token')) || (await echoContext('github', 'token')) || '';
-  const onFileChange = await getYamlInput<OnFileChangeOpts>('on-files-change');
-  const obj = await getYamlInput('test-object');
+  const inputs = parseInputs();
+  const { token, exec: execPipelines } = inputs;
+  console.log(`Token matches: ${token === process.env.ACTIONS_RUNTIME_TOKEN}`)
+  const obj = getYamlInput('test-object');
   console.log({
     inputToken: (await getInput('token')).length,
   });
-  await exec('ls', ['/home/runner/work/_temp/_github_workflow/'])
+  await exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
   await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
-  console.log(onFileChange);
   console.log(obj);
   console.log(process.env)
   if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
@@ -69,13 +63,7 @@ async function entry (id = 0) {
   };
   const comparision = await getComparision(fileChangingCollector);
 
-  const { exportByKeys, changedFiles } = exporter(comparision, onFileChange);
-
-  const keys = Object.keys(exportByKeys);
-  core.setOutput('id', id);
-  core.setOutput('keys', JSON.stringify(keys));
-  core.setOutput('changed_files', JSON.stringify(changedFiles));
-  core.info(JSON.stringify(exportByKeys, null, 2));
+  await outputs.exec(inputs, comparision);
 };
 
 async function run(): Promise<void> {

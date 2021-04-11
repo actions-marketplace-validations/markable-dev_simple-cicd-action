@@ -8,6 +8,9 @@ inputs:
   token:
     description: 'GitHub token'
     required: false
+  exec:
+    description: 'A pipeline to decide how to export outputs to step level'
+    required: true
 # outputs:
 #   random-number:
 #     description: "Random number"

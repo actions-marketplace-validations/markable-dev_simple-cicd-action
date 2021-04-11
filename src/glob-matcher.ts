@@ -1,9 +1,5 @@
 import * as minimatch from 'minimatch';
 
-export type GlobMatcherOptions = {
-  files?: string[];
-};
-
 export class GlobMatcher {
   private globs: string[];
 
