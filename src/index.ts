@@ -31,12 +31,13 @@ const getArrayInput = async (name: string, options?: core.InputOptions): Promise
 
 async function entry (id = 0) {
   const inputs = parseInputs();
+  console.log(inputs)
   const { token } = inputs;
-  await exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
-  await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
-  if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
-    await exec('cat', [process.env.GITHUB_EVENT_PATH]);
-  }
+  // await exec('ls', ['/home/runner/work/_temp/_github_workflow/']);
+  // await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']);
+  // if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
+  //   await exec('cat', [process.env.GITHUB_EVENT_PATH]);
+  // }
 
   const octokit = OctokitClient.getInstance(token);
   const fileChangingCollector = new FileChangingCollector(octokit);
