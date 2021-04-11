@@ -75,7 +75,12 @@ const transformExecOptions = (execOptions: ExecInputCondition, index: number) =>
       return Object.assign(acc, { [key]: {} });
     }, {} as OnChangesOptions);
     onOptions.files = onOptions.files || [];
-    onOptions.events = onOptions.events || [];
+    onOptions.events = onOptions.events || {};
+    if (Array.isArray(onOptions.events)) {
+      onOptions.events = onOptions.events.reduce((acc, key) => {
+        return Object.assign(acc, { [key]: {} })
+      }, {});
+    }
   }
   const onOptionsObj = onOptions as OnChangesOptions;
 
@@ -87,23 +92,18 @@ const transformExecOptions = (execOptions: ExecInputCondition, index: number) =>
   }
 
   const eventKeys = onKeys.filter(key => !definiedKeys.includes(key));
+  const eventsHasKey = !!Object.keys(onOptionsObj.events).length;
 
-  if (eventKeys.length && onOptionsObj.events) {
+  if (!eventsHasKey) {
+    eventKeys.forEach(key => {
+      onOptionsObj.events[key] = onOptionsObj[key] as OnRefChangesOptions;
+    });
+  } else if (eventKeys.length) {
     core.warning(`Conflict inputs: ${eventKeys}. Input ${getOnOptionKey('events')} will be used.`);
-  } else if (!onOptionsObj.events) {
-    onOptionsObj.events = eventKeys.reduce((acc, key) => {
-      acc.events[key] = onOptionsObj[key];
-      return acc;
-    }, { events: {} as OnRefChangesOptions } as OnEvtChangesOptions);
-  }
-  if (Array.isArray(onOptionsObj.events)) {
-    onOptionsObj.events = onOptionsObj.events.reduce((acc, key) => {
-      return Object.assign(acc, { [key]: {} });
-    }, {});
   }
 
   onOptionsObj.fileMatchers = (onOptionsObj.files || []).map((options: OnFileChangeOpts) => new ChangedFileMatcher(options.key, options));
-  onOptionsObj.eventMatchers = Object.keys(onOptionsObj.events).map((event: string) =>
+  onOptionsObj.eventMatchers = onOptionsObj.events.map((event: string) =>
     new RefMatcher(event, onOptionsObj.events[event])
   );
 };
