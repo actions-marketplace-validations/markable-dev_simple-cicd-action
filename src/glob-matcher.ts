@@ -1,4 +1,4 @@
-import * as minimatch from 'minimatch';
+import minimatch from 'minimatch';
 
 export class GlobMatcher {
   private globs: string[];
