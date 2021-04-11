@@ -13576,12 +13576,12 @@ function entry(id = 0) {
             inputToken: (yield getInput('token')).length,
         });
         console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/_github_workflow/']));
-        console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/']));
+        console.log(yield exec_1.exec('ls', ['/home/runner/work/_temp/_runner_file_commands']));
         console.log(onFileChange);
         console.log(obj);
         console.log(process.env);
         if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
-            console.log(yield Promise.resolve().then(() => __importStar(require(process.env.GITHUB_EVENT_PATH))));
+            console.log(yield exec_1.exec('cat', [process.env.GITHUB_EVENT_PATH]));
         }
         const octokit = octokit_1.OctokitClient.getInstance(token);
         const fileChangingCollector = new file_changing_collector_1.FileChangingCollector(octokit);

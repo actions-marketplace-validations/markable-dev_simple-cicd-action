@@ -46,12 +46,12 @@ async function entry (id = 0) {
     inputToken: (await getInput('token')).length,
   });
   console.log(await exec('ls', ['/home/runner/work/_temp/_github_workflow/']));
-  console.log(await exec('ls', ['/home/runner/work/_temp/']));
+  console.log(await exec('ls', ['/home/runner/work/_temp/_runner_file_commands']));
   console.log(onFileChange);
   console.log(obj);
   console.log(process.env)
   if (typeof process.env.GITHUB_EVENT_PATH === 'string') {
-    console.log(await import(process.env.GITHUB_EVENT_PATH))
+    console.log(await exec('cat', [process.env.GITHUB_EVENT_PATH]))
   }
 
   const octokit = OctokitClient.getInstance(token);
