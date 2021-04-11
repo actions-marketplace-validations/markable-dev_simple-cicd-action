@@ -3330,10 +3330,11 @@ class GlobMatcher {
     }
     match(files) {
         if (!files || !files.length) {
+            core.debug(`Match empty file list against rule "${this.globs.join(' ')}", skipped.`);
             return [];
         }
         const results = files.filter(file => this.globs.every(glob => minimatch_1.default(file, glob)));
-        core.debug(`Match ${JSON.stringify(files)} with "${this.globs.join(' ')}": ${JSON.stringify(results)}`);
+        core.debug(`Match ${JSON.stringify(files)} against rule "${this.globs.join(' ')}": ${JSON.stringify(results)}`);
         return results;
     }
 }

@@ -26,7 +26,6 @@ jobs:
                     files:
                     - "!.github"
                     - "**/*.[tj]s"
-
                   branches:
                   - main
                   - dev
