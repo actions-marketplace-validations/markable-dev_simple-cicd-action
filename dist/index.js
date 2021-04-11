@@ -3496,7 +3496,7 @@ const transformExecOptions = (execOptions, index) => {
     onOptionsObj.fileMatchers = (onOptionsObj.files || []).map((options) => new changing_exporter_1.ChangedFileMatcher(options.key, options));
     onOptionsObj.eventMatchers = Object.keys(onOptionsObj.events).map((eventKey) => {
         const event = onOptionsObj.events[eventKey];
-        return new ref_matcher_1.RefMatcher(event, onOptionsObj.events[event]);
+        return new ref_matcher_1.RefMatcher(eventKey, event);
     });
 };
 const getInputs = () => {

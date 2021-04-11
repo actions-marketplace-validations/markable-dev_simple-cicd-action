@@ -106,7 +106,7 @@ const transformExecOptions = (execOptions: ExecInputCondition, index: number) =>
   onOptionsObj.fileMatchers = (onOptionsObj.files || []).map((options: OnFileChangeOpts) => new ChangedFileMatcher(options.key, options));
   onOptionsObj.eventMatchers = Object.keys(onOptionsObj.events).map((eventKey: string) => {
     const event = onOptionsObj.events[eventKey];
-    return new RefMatcher(event, onOptionsObj.events[event]);
+    return new RefMatcher(eventKey, event);
   });
 };
 
