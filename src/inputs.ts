@@ -17,19 +17,27 @@ type OnChangesOptions = {
   eventMatchers: RefMatcher[],
 } & OnRefChangesOptions;
 
-type ExecInputOptions = {
-  on: OnChangesOptions | string | string[],
-  key?: string,
-};
-
-type ExecOptions = {
+type ExecCondition = {
   on: OnChangesOptions,
   key?: string,
 };
 
+type ExecInputCondition = {
+  on: OnChangesOptions | string | string[],
+  key?: string,
+};
+
+type ExecInputOptions = {
+  options: ExecInputCondition[];
+};
+
+type ExecOptions = {
+  options: ExecCondition[];
+};
+
 export type Inputs = {
   'on-files-change'?: OnFileChangeOpts | OnFileChangeOpts[],
-  'exec': { options: ExecOptions[] },
+  'exec': ExecOptions,
   'token': string,
   'test-object'?: object,
 };
@@ -47,7 +55,7 @@ export const getYamlInput = <T = object>(name: string, options?: core.InputOptio
   return Array.isArray(val) ? val : [val as T];
 };
 
-const transformExecOptions = (execOptions: ExecInputOptions, index: number) => {
+const transformExecOptions = (execOptions: ExecInputCondition, index: number) => {
   let { on: onOptions } = execOptions;
   const optionKeyPrefix = `exec[${index}].`;
   const getOptionKey = (name: string): string => `${optionKeyPrefix}${name}`;
@@ -103,7 +111,7 @@ const transformExecOptions = (execOptions: ExecInputOptions, index: number) => {
 
 const getInputs = () => {
   const token = getInput('token', { required: true });
-  const exec = getYamlInput<ExecInputOptions>('exec', { required: true });
+  const [exec] = getYamlInput<ExecInputOptions>('exec', { required: true });
   return {
     token,
     exec,
@@ -113,7 +121,7 @@ const getInputs = () => {
 export const parseInputs = ({ exec, token } = getInputs()): Inputs => {
   const execKeys: string[] = [];
 
-  exec.forEach((opts, index) => {
+  exec.options.forEach((opts, index) => {
     transformExecOptions(opts, index);
     if (!opts.key) {
       return;
@@ -126,6 +134,6 @@ export const parseInputs = ({ exec, token } = getInputs()): Inputs => {
 
   return {
     token,
-    exec: exec as ExecOptions[],
+    exec: exec as ExecOptions,
   };
 };
