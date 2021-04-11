@@ -13480,13 +13480,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(186));
 const file_changing_collector_1 = __webpack_require__(437);
@@ -13495,28 +13488,17 @@ const parse_yaml_1 = __webpack_require__(197);
 const changing_exporter_1 = __webpack_require__(789);
 const echo_1 = __webpack_require__(431);
 const getInput = (name, options) => __awaiter(void 0, void 0, void 0, function* () {
-    var e_1, _a;
     let val = core.getInput(name, options);
-    const patterns = val.match(/\$\{\{ *[^ ]+ *\}\}/gm);
-    if (!patterns) {
-        return val;
-    }
-    try {
-        for (var patterns_1 = __asyncValues(patterns), patterns_1_1; patterns_1_1 = yield patterns_1.next(), !patterns_1_1.done;) {
-            const ptn = patterns_1_1.value;
-            const match = ptn.match(/\$\{\{ *([^ ]+) *\}\}/);
-            const str = match ? (yield echo_1.echo(match[1])) : '';
-            val = val.replace(ptn, str || '');
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (patterns_1_1 && !patterns_1_1.done && (_a = patterns_1.return)) yield _a.call(patterns_1);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
     return val;
+    // const patterns = val.match(/\$\{\{ *[^ ]+ *\}\}/gm);
+    // if (!patterns) {
+    //   return val;
+    // }
+    // for await (const ptn of patterns) {
+    //   const str = await echo(ptn);
+    //   val = val.replace(ptn, str || '');
+    // }
+    // return val;
 });
 const getArrayInput = (name, options) => __awaiter(void 0, void 0, void 0, function* () {
     const ret = yield getInput(name, options);
@@ -13538,7 +13520,7 @@ const getYamlInput = (name, options) => __awaiter(void 0, void 0, void 0, functi
 });
 function entry(id = 0) {
     return __awaiter(this, void 0, void 0, function* () {
-        const token = (yield getInput('token')) || (yield echo_1.echo('github.token')) || '';
+        const token = (yield getInput('token')) || (yield echo_1.echoContext('github', 'token')) || '';
         const onFileChange = yield getYamlInput('on-files-change');
         const obj = yield getYamlInput('test-object');
         console.log({
@@ -13593,7 +13575,13 @@ function run() {
         //       4.1.1 Command lines
         //       4.1.2 ArgoCD
         //       4.1.3 Helm
-        entry();
+        try {
+            yield entry();
+        }
+        catch (error) {
+            core.debug(error.stack);
+            core.setFailed(error.message);
+        }
     });
 }
 ;

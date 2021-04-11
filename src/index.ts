@@ -3,20 +3,20 @@ import { FileChangingCollector } from './file-changing-collector';
 import { OctokitClient } from './octokit';
 import { parse } from './parse-yaml';
 import { OnFileChangeOpts, exporter } from './changing-exporter';
-import { echo } from './echo';
+import { echo, echoContext } from './echo';
 
 const getInput = async (name: string, options?: core.InputOptions): Promise<string> => {
   let val = core.getInput(name, options);
-  const patterns = val.match(/\$\{\{ *[^ ]+ *\}\}/gm);
-  if (!patterns) {
-    return val;
-  }
-  for await (const ptn of patterns) {
-    const match = ptn.match(/\$\{\{ *([^ ]+) *\}\}/);
-    const str = match ? (await echo(match[1])) : '';
-    val = val.replace(ptn, str || '');
-  }
   return val;
+  // const patterns = val.match(/\$\{\{ *[^ ]+ *\}\}/gm);
+  // if (!patterns) {
+  //   return val;
+  // }
+  // for await (const ptn of patterns) {
+  //   const str = await echo(ptn);
+  //   val = val.replace(ptn, str || '');
+  // }
+  // return val;
 };
 const getArrayInput = async (name: string, options?: core.InputOptions): Promise<string[]> => {
   const ret = await getInput(name, options);
@@ -38,7 +38,7 @@ const getYamlInput = async <T = object>(name: string, options?: core.InputOption
 };
 
 async function entry (id = 0) {
-  const token = (await getInput('token')) || (await echo('github.token')) || '';
+  const token = (await getInput('token')) || (await echoContext('github', 'token')) || '';
   const onFileChange = await getYamlInput<OnFileChangeOpts>('on-files-change');
   const obj = await getYamlInput('test-object');
   console.log({
@@ -96,7 +96,12 @@ async function run(): Promise<void> {
   //       4.1.1 Command lines
   //       4.1.2 ArgoCD
   //       4.1.3 Helm
-  entry();
+  try {
+    await entry();
+  } catch (error) {
+    core.debug(error.stack);
+    core.setFailed(error.message);
+  }
 };
 
 run();
