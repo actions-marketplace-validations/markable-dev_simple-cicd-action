@@ -22,7 +22,7 @@ type Results = {
   matches: Changed[],
 } & RefData;
 
-export const parse = async ({ exec: execPipelines }: Inputs, comparision: Comparision) => {
+export const parse = async ({ exec: { options: execPipelines } }: Inputs, comparision: Comparision) => {
   const ref = await getSelfRef();
   const refData = {
     sha: ref.sha,

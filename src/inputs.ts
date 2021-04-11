@@ -29,7 +29,7 @@ type ExecOptions = {
 
 export type Inputs = {
   'on-files-change'?: OnFileChangeOpts | OnFileChangeOpts[],
-  'exec': ExecOptions[],
+  'exec': { options: ExecOptions[] },
   'token': string,
   'test-object'?: object,
 };

@@ -34,7 +34,7 @@ const getArrayInput = async (name: string, options?: core.InputOptions): Promise
 
 async function entry (id = 0) {
   const inputs = parseInputs();
-  const { token, exec: execPipelines } = inputs;
+  const { token } = inputs;
   console.log(`Token matches: ${token === process.env.ACTIONS_RUNTIME_TOKEN}`)
   const obj = getYamlInput('test-object');
   console.log({
