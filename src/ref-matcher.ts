@@ -1,3 +1,4 @@
+import * as core from '@actions/core';
 import { getRef, Ref } from './ref';
 
 const REGEX_REG = /^\/(.+)\/(\w+)?$/;
@@ -41,6 +42,8 @@ export class RefMatcher {
   }
 
   match (event: string = process.env.GITHUB_EVENT_NAME || '', ref: string | Ref = process.env.GITHUB_REF || ''): boolean {
+    const { type, name } = getRef(ref);
+    core.debug(`Match ${event}/${type}/${name} against ${this.event}/${type}/${this[type]}`);
     if (this.event !== event) {
       return false;
     }
@@ -48,7 +51,6 @@ export class RefMatcher {
       return true;
     }
 
-    const { type, name } = getRef(ref);
     if (!this[type]) {
       return false;
     }
