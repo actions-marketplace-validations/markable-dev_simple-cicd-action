@@ -18,9 +18,19 @@ type Changed = {
   changed: Comparision,
 } & RefData;
 
+type Matrix = {
+  keys: {
+    key: string[]
+  },
+  matches: {
+    match: Changed[],
+  },
+};
+
 type Results = {
   keys: string[],
-  matches: Changed[],
+  matches: { [key: string]: Changed },
+  matrix: Matrix,
 } & RefData;
 
 export const parse = async ({ exec: { options: execPipelines } }: Inputs, comparision: Comparision) => {
@@ -39,13 +49,21 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
   }
   const results: Results = {
     keys: [],
-    matches: [],
+    matches: {},
+    matrix: {
+      keys: {
+        key: [],
+      },
+      matches: {
+        match: [],
+      }
+    },
     ...refData,
   };
 
   // Pick ref matches the rules passed in by user
   const pipe = execPipelines.find(pipe => {
-    const { on: { eventMatchers } } = pipe; 
+    const { on: { eventMatchers } } = pipe;
     if (!eventMatchers || !eventMatchers.length) {
       return true;
     }
@@ -63,13 +81,16 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
     const matches = fileMatcher.match(comparision);
     if (matches.all.length && !results.keys.includes(fileMatcher.key)) {
       results.keys.push(fileMatcher.key);
-      results.matches.push({
+      results.matches[fileMatcher.key] = {
         key: fileMatcher.key,
         changed: matches,
         ...refData,
-      });
+      };
     }
   }
+
+  results.matrix.keys.key = results.keys;
+  results.matrix.matches.match = Object.values(results.matches);
 
   return results;
 };

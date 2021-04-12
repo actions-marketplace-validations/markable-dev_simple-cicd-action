@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Test action
     outputs:
-      keys: ${{ steps.hello.outputs.keys }}
-      changed: ${{ steps.hello.outputs.changed }}
+      keys: ${{ steps.hello.outputs.matrix.keys }}
+      matches: ${{ steps.hello.outputs.matrix.matches }}
       tag: ${{ steps.hello.outputs.releaseOrSlug }}
       sha: ${{ steps.hello.outputs.sha }}
     steps:
@@ -37,19 +37,32 @@ jobs:
                     - dev
                     tags:
                     - /v\d+\.\d+\.\d+$/
-  check:
+  check-matrix:
     runs-on: ubuntu-latest
-    name: Check outputs
+    name: Check matrix outputs
     needs:
     - hello
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.hello.outputs.changed) }}
+      matrix: ${{ fromJson(needs.hello.outputs.matches) }}
     steps:
     - uses: actions/checkout@v2
-    - name: Check Subproject
+    - name: Check
       run: |
         echo "${{ needs.hello.outputs.tag }}"
         echo "${{ needs.hello.outputs.sha }}"
-        echo "${{ matrix.key }}"
-        echo "${{ toJson(matrix.changed) }}"
+        echo "${{ needs.hello.outputs.keys }}"
+        echo "${{ toJson(matrix.match) }}"
+  check-outputs:
+    runs-on: ubuntu-latest
+    name: Check outputs
+    needs:
+    - hello
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check
+      run: |
+        echo "${{ needs.hello.outputs.tag }}"
+        echo "${{ needs.hello.outputs.sha }}"
+        echo "${{ needs.hello.outputs.keys }}"
+        echo "${{ toJson(needs.hello.outputs.matches) }}"

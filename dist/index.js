@@ -7781,7 +7781,14 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
     else if (ref.type === 'heads') {
         refData.branch = ref.name;
     }
-    const results = Object.assign({ keys: [], matches: [] }, refData);
+    const results = Object.assign({ keys: [], matches: {}, matrix: {
+            keys: {
+                key: [],
+            },
+            matches: {
+                match: [],
+            }
+        } }, refData);
     // Pick ref matches the rules passed in by user
     const pipe = execPipelines.find(pipe => {
         const { on: { eventMatchers } } = pipe;
@@ -7802,7 +7809,7 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
             const matches = fileMatcher.match(comparision);
             if (matches.all.length && !results.keys.includes(fileMatcher.key)) {
                 results.keys.push(fileMatcher.key);
-                results.matches.push(Object.assign({ key: fileMatcher.key, changed: matches }, refData));
+                results.matches[fileMatcher.key] = Object.assign({ key: fileMatcher.key, changed: matches }, refData);
             }
         }
     }
@@ -7813,6 +7820,8 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
         }
         finally { if (e_1) throw e_1.error; }
     }
+    results.matrix.keys.key = results.keys;
+    results.matrix.matches.match = Object.values(results.matches);
     return results;
 });
 exports.exec = (inputs, comparision) => __awaiter(void 0, void 0, void 0, function* () {
