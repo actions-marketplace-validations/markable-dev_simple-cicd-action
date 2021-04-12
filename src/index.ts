@@ -56,8 +56,11 @@ async function entry (id = 0) {
   try {
     comparision = await getComparision(fileChangingCollector);
   } catch (error) {
-    console.log(error);
-    core.debug(error);
+    if (error.name === 'HttpError' && error.status === 404) {
+      core.debug(error);
+    } else {
+      throw error;
+    }
   }
 
   await outputs.exec(inputs, comparision);

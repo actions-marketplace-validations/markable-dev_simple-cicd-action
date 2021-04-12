@@ -1,6 +1,6 @@
 {
   "name": "simple-cicd-action",
-  "version": "0.0.1-beta.4",
+  "version": "0.0.1-beta.6",
   "main": "lib/index.js",
   "repository": "git@github.com:gnat-service/simple-cicd-action.git",
   "author": "leaf4monkey <leaf4monkey@gmail.com>",
