@@ -1,4 +1,4 @@
-name: gnat-service/simple-cicd
+name: markable-dev/simple-cicd
 author: leaf4monkey
 description: A simplified CI pipeline tool
 inputs:
