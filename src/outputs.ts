@@ -98,6 +98,10 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
 export const exec = async (inputs: Inputs, comparision: Comparision) => {
   const results = await parse(inputs, comparision);
   core.info(`Set outputs:`);
+  core.info(`  matrix.keys`);
+  core.setOutput('keysMatrix', JSON.stringify(results.matrix.keys));
+  core.info(`  matrix.matches`);
+  core.setOutput('matchesMatrix', JSON.stringify(results.matrix.matches));
   Object.keys(results).forEach(key => {
     const val = results[key];
     if (typeof val === 'string') {

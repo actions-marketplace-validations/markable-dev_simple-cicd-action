@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Test action
     outputs:
-      keys: ${{ steps.hello.outputs.matrix.keys }}
-      matches: ${{ steps.hello.outputs.matrix.matches }}
+      keys: ${{ steps.hello.outputs.keysMatrix }}
+      matches: ${{ steps.hello.outputs.matchesMatrix }}
       tag: ${{ steps.hello.outputs.releaseOrSlug }}
       sha: ${{ steps.hello.outputs.sha }}
     steps:
@@ -62,7 +62,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Check
       run: |
-        echo "${{ needs.hello.outputs.tag }}"
-        echo "${{ needs.hello.outputs.sha }}"
-        echo "${{ needs.hello.outputs.keys }}"
-        echo "${{ toJson(needs.hello.outputs.matches) }}"
+        echo "tag: ${{ needs.hello.outputs.tag }}"
+        echo "sha: ${{ needs.hello.outputs.sha }}"
+        echo "keys: ${{ needs.hello.outputs.keys }}"
+        echo "matches: ${{ toJson(needs.hello.outputs.matches) }}"
