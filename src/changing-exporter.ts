@@ -20,11 +20,14 @@ export class ChangedFileMatcher {
     this.globber = new GlobMatcher(typeof options.files === 'string' ? options.files.split(' ') : options.files);
   }
 
-  match (comparision: Comparision) {
+  match (comparision?: Comparision) {
     const changedFiles = FileChangingCollector.ALL_FILE_STATUSES.reduce(
       (acc, type) => Object.assign(acc, { [type]: [] }),
       { added_modified: [], all: [] } as unknown as Comparision & { added_modified: string[] }
     );
+    if (!comparision) {
+      return changedFiles;
+    }
 
     this.matches.forEach(changeType => {
       changedFiles[changeType] = this.globber?.match(comparision[changeType]) || [];
@@ -36,7 +39,7 @@ export class ChangedFileMatcher {
   }
 }
 
-export const exporter = (comparision: Comparision, onFileChange: OnFileChangeOpts[]) => {
+export const exporter = (comparision: Comparision | undefined, onFileChange: OnFileChangeOpts[]) => {
   const matchers = onFileChange.map(opts => new ChangedFileMatcher(opts.key, opts));
 
   return matchers.reduce((acc, matcher) => {

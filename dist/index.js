@@ -14991,6 +14991,9 @@ class ChangedFileMatcher {
     }
     match(comparision) {
         const changedFiles = file_changing_collector_1.FileChangingCollector.ALL_FILE_STATUSES.reduce((acc, type) => Object.assign(acc, { [type]: [] }), { added_modified: [], all: [] });
+        if (!comparision) {
+            return changedFiles;
+        }
         this.matches.forEach(changeType => {
             var _a;
             changedFiles[changeType] = ((_a = this.globber) === null || _a === void 0 ? void 0 : _a.match(comparision[changeType])) || [];
@@ -15211,7 +15214,14 @@ function entry(id = 0) {
             });
             return comparision;
         });
-        const comparision = yield getComparision(fileChangingCollector);
+        let comparision;
+        try {
+            comparision = yield getComparision(fileChangingCollector);
+        }
+        catch (error) {
+            console.log(error);
+            core.debug(error);
+        }
         yield outputs.exec(inputs, comparision);
     });
 }

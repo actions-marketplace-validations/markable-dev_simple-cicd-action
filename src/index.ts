@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { FileChangingCollector } from './file-changing-collector';
+import { Comparision, FileChangingCollector } from './file-changing-collector';
 import { OctokitClient } from './octokit';
 import { parseInputs } from './inputs';
 import * as outputs from './outputs';
@@ -51,7 +51,14 @@ async function entry (id = 0) {
     });
     return comparision;
   };
-  const comparision = await getComparision(fileChangingCollector);
+
+  let comparision: Comparision | undefined;
+  try {
+    comparision = await getComparision(fileChangingCollector);
+  } catch (error) {
+    console.log(error);
+    core.debug(error);
+  }
 
   await outputs.exec(inputs, comparision);
 };

@@ -33,7 +33,7 @@ type Results = {
   matrix: Matrix,
 } & RefData;
 
-export const parse = async ({ exec: { options: execPipelines } }: Inputs, comparision: Comparision) => {
+export const parse = async ({ exec: { options: execPipelines } }: Inputs, comparision?: Comparision) => {
   const ref = await getSelfRef();
   const refData = {
     sha: ref.sha,
@@ -95,7 +95,7 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
   return results;
 };
 
-export const exec = async (inputs: Inputs, comparision: Comparision) => {
+export const exec = async (inputs: Inputs, comparision?: Comparision) => {
   const results = await parse(inputs, comparision);
   core.info(`Set outputs:`);
   core.info(`  matrix.keys`);
