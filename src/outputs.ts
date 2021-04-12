@@ -10,6 +10,7 @@ type RefData = {
   tag?: string;
   branch?: string;
   release?: string;
+  releaseOrSlug?: string;
 };
 
 type Changed = {
@@ -29,6 +30,7 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
     refSlug: ref.slug,
     refName: ref.name,
     release: ref.release ? ref.release : undefined,
+    releaseOrSlug: ref.release || ref.slug,
   } as RefData;
   if (ref.type === 'tags') {
     refData.tag = ref.name;
@@ -43,7 +45,11 @@ export const parse = async ({ exec: { options: execPipelines } }: Inputs, compar
 
   // Pick ref matches the rules passed in by user
   const pipe = execPipelines.find(pipe => {
-    const { on: { eventMatchers } } = pipe;
+    const { on: { eventMatchers } } = pipe; 
+    if (!eventMatchers || !eventMatchers.length) {
+      return true;
+    }
+
     return eventMatchers.some(eventMatcher => eventMatcher.match());
   });
   if (!pipe) {

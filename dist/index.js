@@ -7773,6 +7773,7 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
         refSlug: ref.slug,
         refName: ref.name,
         release: ref.release ? ref.release : undefined,
+        releaseOrSlug: ref.release || ref.slug,
     };
     if (ref.type === 'tags') {
         refData.tag = ref.name;
@@ -7784,6 +7785,9 @@ exports.parse = ({ exec: { options: execPipelines } }, comparision) => __awaiter
     // Pick ref matches the rules passed in by user
     const pipe = execPipelines.find(pipe => {
         const { on: { eventMatchers } } = pipe;
+        if (!eventMatchers || !eventMatchers.length) {
+            return true;
+        }
         return eventMatchers.some(eventMatcher => eventMatcher.match());
     });
     if (!pipe) {
@@ -15050,6 +15054,9 @@ class RefMatcher {
     match(event = process.env.GITHUB_EVENT_NAME || '', ref = process.env.GITHUB_REF || '') {
         const { type, name } = ref_1.getRef(ref);
         core.debug(`Match ${event}/${type}/${name} against ${this.event}/${type}/${this[type]}`);
+        if (!this.event) {
+            return true;
+        }
         if (this.event !== event) {
             return false;
         }

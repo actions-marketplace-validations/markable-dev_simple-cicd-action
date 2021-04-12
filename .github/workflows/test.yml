@@ -1,9 +1,14 @@
 on: [push]
 
 jobs:
-  test:
+  hello:
     runs-on: ubuntu-latest
     name: Test action
+    outputs:
+      keys: ${{ steps.hello.outputs.keys }}
+      changed: ${{ steps.hello.outputs.changed }}
+      tag: ${{ steps.hello.outputs.releaseOrSlug }}
+      sha: ${{ steps.hello.outputs.sha }}
     steps:
       # To use this repository's private action,
       # you must check out the repository
@@ -32,3 +37,19 @@ jobs:
                     - dev
                     tags:
                     - /v\d+\.\d+\.\d+$/
+  check:
+    runs-on: ubuntu-latest
+    name: Check outputs
+    needs:
+    - hello
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.hello.outputs.changed) }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check Subproject
+      run: |
+        echo "${{ needs.hello.outputs.tag }}"
+        echo "${{ needs.hello.outputs.sha }}"
+        echo "${{ matrix.key }}"
+        echo "${{ toJson(matrix.changed) }}"
