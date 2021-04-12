@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 import { FileChangingCollector } from './file-changing-collector';
 import { OctokitClient } from './octokit';
-import { exec } from './exec';
 import { parseInputs } from './inputs';
 import * as outputs from './outputs';
 

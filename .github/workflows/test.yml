@@ -35,6 +35,8 @@ jobs:
                     branches:
                     - main
                     - dev
+              - on:
+                  push:
                     tags:
                     - /v\d+\.\d+\.\d+$/
   check-matrix:

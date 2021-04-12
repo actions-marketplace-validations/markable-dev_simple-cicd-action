@@ -7428,7 +7428,6 @@ function fetchWrapper(requestOptions) {
     }
 
     if (status >= 400) {
-      console.log(requestOptions);
       return response.text().then(message => {
         const error = new requestError.RequestError(message, status, {
           headers,
